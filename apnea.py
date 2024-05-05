@@ -6,7 +6,7 @@ from sklearn.metrics import accuracy_score, confusion_matrix, classification_rep
 import numpy as np
 from collections import defaultdict
 
-# Function to preprocess data
+''' Function to preprocess data
 def preprocess_data(df, label_encoders, scaler):
     for feat, le in label_encoders.items():
         if feat in df.columns:
@@ -15,7 +15,7 @@ def preprocess_data(df, label_encoders, scaler):
             df[feat] = le.transform(df[feat])
 
     scaled_df = scaler.transform(df)
-    return scaled_df
+    return scaled_df'''
 
 # Function to evaluate Random Forest with Stratified K-Fold cross-validation
 def evaluate_rf(x_scaled, y):
@@ -108,12 +108,12 @@ print_encoded_values(label_encoders)
 print("Cross-Validation Results:")
 print(f"\nAverage Accuracy: {rf_results['avg_accuracy']:.2f}")
 print("Average Confusion Matrix:")
-print(rf_results['avg_confusion_matrix']) 
+print(rf_results['avg_confusion_matrix'])
 print("Average Classification Report:")
-print(pd.DataFrame(rf_results['avg_classification_report']).T) 
+print(pd.DataFrame(rf_results['avg_classification_report']).T)
 
 # Create a new patient data instance for prediction
-patient_data_2 = pd.DataFrame({
+patient_data_1 = pd.DataFrame({
     'Gender': [1],
     'Age': [28],
     'Occupation': [1],
@@ -127,18 +127,39 @@ patient_data_2 = pd.DataFrame({
     'SYS': [125],
     'DIA': [80]
 })
+patient_data_2 = pd.DataFrame({
+    'Gender': [1],
+    'Age' : [28],
+    'Occupation' : [6],
+    'Sleep Duration': [5.9],
+    'Quality of Sleep' : [4],
+    'Physical Activity Level' : [30],
+    'Stress Level' : [8],
+    'BMI Category' : [2],
+    'Heart Rate' : [85],
+    'Daily Steps' : [3000],
+    'SYS' : [140],
+    'DIA' : [90]
+})
 
-# Preprocess new patient data
-processed_patient_data = preprocess_data(patient_data_2, label_encoders, scaler)
-
+scaled_patient_data_1 = scaler.transform(patient_data_1)
+scaled_patient_data_2 = scaler.transform(patient_data_2)
 
 # Predict using the trained Random Forest classifier
-prediction_result = rf_classifier.predict(processed_patient_data)
 
+patient_predictions_1 = rf_classifier.predict(scaled_patient_data_1)
+patient_predictions_2 = rf_classifier.predict(scaled_patient_data_2)
+print(patient_predictions_1)
+print(patient_predictions_2)
 
-# Generate a label based on the prediction
-prediction_label = 'Has Apnea' if prediction_result[0] == 1 else 'No Apnea'
+print("\nPredictions for patient data:")
+if(patient_predictions_1==1):
+    print("Patient has been diagnosed with Sleep Apnea")
 
+else:
+    print('Patient does not have sleep apnea')
 
-print(f"\nPrediction for the given patient: {prediction_label}")
-
+if(patient_predictions_2==1):
+  print("Patient has been diagnosed with Sleep Apnea")
+else:
+    print('Patient does not have sleep apnea')
